@@ -1,6 +1,6 @@
 {
-    "name": "beaudierman/ups",
-    "description": "A simple tool to return UPS shipping rates.",
+    "name": "dev-simplify/graceframe-ups",
+    "description": "A simple tool to return UPS shipping rates customized for graceframe.com",
     "keywords": [
         "laravel",
         "ups",
