@@ -102,7 +102,7 @@ class Ups {
                 <RequestOption>' . $options['request_option'] . '</RequestOption>
             </Request>
             <PickupType>
-                <Code>02</Code>
+                <Code>01</Code>
             </PickupType>
             <Shipment>
                 <Shipper>
@@ -150,7 +150,7 @@ class Ups {
             for ($i = 0; $i < $pk['number']; $i++) {
                 $xml = '<Package>
                     <PackagingType>
-                        <Code>01</Code>
+                        <Code>02</Code>
                     </PackagingType>
                         <Dimensions>
                             <UnitOfMeasurement>
