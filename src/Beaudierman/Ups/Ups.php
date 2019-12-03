@@ -150,7 +150,7 @@ class Ups {
             for ($i = 0; $i < $pk['number']; $i++) {
                 $xml = '<Package>
                     <PackagingType>
-                        <Code>02</Code>
+                        <Code>01</Code>
                     </PackagingType>
                         <Dimensions>
                             <UnitOfMeasurement>
