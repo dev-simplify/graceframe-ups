@@ -54,7 +54,7 @@ class Ups {
      * located at beaudierman/ups/src/config/config.php
      *
      * @param credentials array
-     * 
+     *
      * @return void
      * */
     public function loadCredentials($credentials) {
@@ -86,49 +86,48 @@ class Ups {
         $negotiated_flag = ($this->negotiated_rates) ? '<RateInformation><NegotiatedRatesIndicator/></RateInformation>' : '';
 
         $this->xml = '<?xml version="1.0"?>
-		<AccessRequest xml:lang="en-US">
-			<AccessLicenseNumber>' . $this->access_key . '</AccessLicenseNumber>
-			<UserId>' . $this->username . '</UserId>
-			<Password>' . $this->password . '</Password>
-		</AccessRequest>
-		<?xml version="1.0"?>
-		<RatingServiceSelectionRequest xml:lang="en-US">
-			<Request>
-				<TransactionReference>
-					<CustomerContext>Rate Request</CustomerContext>
-					<XpciVersion>1.0001</XpciVersion>
-				</TransactionReference>
-				<RequestAction>Rate</RequestAction>
-				<RequestOption>' . $options['request_option'] . '</RequestOption>
-			</Request>
-			<PickupType>
-				<Code>03</Code>
-			</PickupType>
-			<Shipment>
-				<Shipper>
-					<ShipperNumber>' . $this->account_number . '</ShipperNumber>
-					<Address>
-						<PostalCode>' . $options['from_zip'] . '</PostalCode>
-						<StateProvinceCode>' . $options['from_state'] . '</StateProvinceCode>
-						<CountryCode>' . $options['from_country'] . '</CountryCode>
-					</Address>
-				</Shipper>
-				<ShipTo>
-					<Address>
-						<PostalCode>' . $options['to_zip'] . '</PostalCode>
-						<StateProvinceCode>' . $options['to_state'] . '</StateProvinceCode>
-						<CountryCode>' . $options['to_country'] . '</CountryCode>
-						' . $residential_flag . '
-					</Address>
-				</ShipTo>
-				<Service>
-					<Code>' . $options['service_type'] . '</Code>
-					<Description>Package</Description>
-				</Service>
-				<ShipmentServiceOptions/>
-				' . $this->buildPackages($options['packages']) . $negotiated_flag . '
-			</Shipment>
-		</RatingServiceSelectionRequest>';
+        <AccessRequest xml:lang="en-US">
+            <AccessLicenseNumber>' . $this->access_key . '</AccessLicenseNumber>
+            <UserId>' . $this->username . '</UserId>
+            <Password>' . $this->password . '</Password>
+        </AccessRequest>
+        <?xml version="1.0"?>
+        <RatingServiceSelectionRequest xml:lang="en-US">
+            <Request>
+                <TransactionReference>
+                    <CustomerContext>Rate Request</CustomerContext>
+                    <XpciVersion>1.0001</XpciVersion>
+                </TransactionReference>
+                <RequestAction>Rate</RequestAction>
+                <RequestOption>' . $options['request_option'] . '</RequestOption>
+            </Request>
+            <PickupType>
+                <Code>02</Code>
+            </PickupType>
+            <Shipment>
+                <Shipper>
+                    <ShipperNumber>' . $this->account_number . '</ShipperNumber>
+                    <Address>
+                        <PostalCode>' . $options['from_zip'] . '</PostalCode>
+                        <StateProvinceCode>' . $options['from_state'] . '</StateProvinceCode>
+                        <CountryCode>' . $options['from_country'] . '</CountryCode>
+                    </Address>
+                </Shipper>
+                <ShipTo>
+                    <Address>
+                        <PostalCode>' . $options['to_zip'] . '</PostalCode>
+                        <StateProvinceCode>' . $options['to_state'] . '</StateProvinceCode>
+                        <CountryCode>' . $options['to_country'] . '</CountryCode>
+                        ' . $residential_flag . '
+                    </Address>
+                </ShipTo>
+                <Service>
+                    <Code>' . $options['service_type'] . '</Code>
+                    <Description>Package</Description>
+                </Service>
+                ' . $this->buildPackages($options['packages']) . $negotiated_flag . '
+            </Shipment>
+        </RatingServiceSelectionRequest>';
 
         return $this->send();
     }
@@ -149,25 +148,37 @@ class Ups {
 
         foreach ($options as $pk) {
             for ($i = 0; $i < $pk['number']; $i++) {
-                $packages[] = '<Package>
-					<PackagingType>
-						<Code>02</Code>
-					</PackagingType>
-                                        <Dimensions>
-                                            <UnitOfMeasurement>
-                                            <Code>IN</Code>
-                                            </UnitOfMeasurement>
-                                            <Length>' . $pk['length'] . '</Length>
-                                            <Width>' . $pk['width'] . '</Width>
-                                            <Height>' . $pk['height'] . '</Height>
-                                        </Dimensions>
-					<PackageWeight>
-						<UnitOfMeasurement>
-							<Code>' . $pk['measurement'] . '</Code>
-						</UnitOfMeasurement>
-						<Weight>' . $pk['weight'] . '</Weight>
-					</PackageWeight>
-				</Package>';
+                $xml = '<Package>
+                    <PackagingType>
+                        <Code>02</Code>
+                    </PackagingType>
+                        <Dimensions>
+                            <UnitOfMeasurement>
+                            <Code>IN</Code>
+                            </UnitOfMeasurement>
+                            <Length>' . $pk['length'] . '</Length>
+                            <Width>' . $pk['width'] . '</Width>
+                            <Height>' . $pk['height'] . '</Height>
+                        </Dimensions>
+                    <PackageWeight>
+                        <UnitOfMeasurement>
+                            <Code>' . $pk['measurement'] . '</Code>
+                        </UnitOfMeasurement>
+                        <Weight>' . number_format($pk['weight'], 1, '.', '') . '</Weight>
+                    </PackageWeight>';
+
+                // if (!empty($pk['value'])) {
+                //     $xml .= '<PackageServiceOptions>
+                //         <InsuredValue>
+                //             <CurrencyCode>USD</CurrencyCode>
+                //             <MonetaryValue>'. number_format($pk['value'], 0, '.', '') .'</MonetaryValue>
+                //         </InsuredValue>
+                //     </PackageServiceOptions>';
+                // }
+
+                $xml .= '</Package>';
+
+                $packages[] = $xml;
             }
         }
 
