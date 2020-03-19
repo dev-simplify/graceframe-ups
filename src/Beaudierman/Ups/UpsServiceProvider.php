@@ -28,8 +28,7 @@ class UpsServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app['ups'] = $this->app->share(function($app)
-		{
+		$this->app->bind('Beaudierman\Ups', function($app) {
 			return new Ups;
 		});
 	}
